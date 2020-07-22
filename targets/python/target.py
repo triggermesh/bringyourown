@@ -58,10 +58,10 @@ def target():
             .SetEventType("io.triggermesh.target.byown")
         )
         return app.response_class(
-                                    response=body,
-                                    headers=headers,
-                                    status=400
-            				    )
+                response=body,
+                headers=headers,
+                status=400
+        )
 
     # Do your Transformation or Target work based on the eventype
     if ce.EventType() == "io.triggermesh.byown.create":
