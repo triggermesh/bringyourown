@@ -65,7 +65,7 @@ def target():
 
     # Do your Transformation or Target work based on the eventype
     if ce.EventType() == "io.triggermesh.byown.create":
-        logging.info("Create EventType")
+        logging.info("Create event type")
     elif ce.EventType() == "io.triggermesh.byown.delete":
         logging.info("Delete event type")
     else:
