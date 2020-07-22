@@ -67,7 +67,7 @@ def target():
     if ce.EventType() == "io.triggermesh.byown.create":
         logging.info("Create EventType")
     elif ce.EventType() == "io.triggermesh.byown.delete":
-        logging.info("Delete EventType")
+        logging.info("Delete event type")
     else:
         logging.warning("Unknown EventType")
 
