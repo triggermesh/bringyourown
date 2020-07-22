@@ -14,9 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import json
+import logging
 from datetime import datetime, timezone
+import uuid
 
 from cloudevents.sdk import converters
 from cloudevents.sdk import marshaller
@@ -28,20 +29,47 @@ from flask import request
 
 app = Flask(__name__)
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/', methods=['POST'])
 def target():
-    mb = marshaller.NewHTTPMarshaller([binary.NewBinaryHTTPCloudEventConverter()])
-
+	
     # Deserialize the HTTP request into a CloudEvent
-    ce = mb.FromRequest(v1.Event(), request.headers, request.stream.read(), lambda x: x)
-    
+    try:
+    	logging.info('Deserializing CloudEvent in binary format')
+    	# Instantiate the Binary Format marshaller
+        mb = marshaller.NewHTTPMarshaller([binary.NewBinaryHTTPCloudEventConverter()])
+        ce = mb.FromRequest(v1.Event(), request.headers, request.stream.read(), lambda x: x)
+    except:
+        logging.warning('Deserializing application/cloudevents+json CloudEvent')
+        # Instantiate the JSON Structured CloudEvent marshaller
+        m = marshaller.NewHTTPMarshaller([structured.NewJSONHTTPCloudEventConverter()])
+        ce = m.FromRequest()
+    except:
+    	logging.warning('Could not deserialize CloudEvent')
+    	    # Create a CloudEvent to send as response
+        data = 'Data received was not understandable as a CloudEvent'
+        event = (
+            v1.Event()
+            .SetContentType("application/json")
+            .SetData(data)
+            .SetEventID(str(uuid.uuid1()))
+            .SetSource("from_your_own_target")
+            .SetSubject("your_event_subject")
+            .SetEventTime(datetime.now(timezone.utc).astimezone().isoformat())
+            .SetEventType("io.triggermesh.target.byown")
+        )
+        return app.response_class(
+                                    response=body,
+                                    headers=headers,
+                                    status=400
+            				    )
+
     # Do your Transformation or Target work based on the eventype
-    if ce.EventType() == "com.triggermesh.create":
-        print("Create EventType")
-    elif ce.EventType() == "com.triggermesh.delete":
-        print("Delete EventType")
+    if ce.EventType() == "io.triggermesh.byown.create":
+        logging.info("Create EventType")
+    elif ce.EventType() == "io.triggermesh.byown.delete":
+        logging.info("Delete EventType")
     else:
-        print("Unknown EventType")
+        logging.warning("Unknown EventType")
 
     # Create a CloudEvent to send as response
     data = 'this is some data'
@@ -49,13 +77,14 @@ def target():
         v1.Event()
         .SetContentType("application/json")
         .SetData(data)
-        .SetEventID("my-id")
-        .SetSource("from-galaxy-far-far-away")
-        .SetSubject("foobar")
+        .SetEventID(str(uuid.uuid1()))
+        .SetSource("from_your_own_target")
+        .SetSubject("your_event_subject")
         .SetEventTime(datetime.now(timezone.utc).astimezone().isoformat())
-        .SetEventType("com.triggermesh.transform")
+        .SetEventType("io.triggermesh.target.byown")
     )
 
+    # Prepare the Header and Body to send a request back as a CloudEvent
     m = marshaller.NewHTTPMarshaller([structured.NewJSONHTTPCloudEventConverter()])
     headers, body = m.ToRequest(event, converters.TypeStructured, lambda x: x)
 
