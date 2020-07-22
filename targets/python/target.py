@@ -51,7 +51,7 @@ def target():
             v1.Event()
             .SetContentType("application/json")
             .SetData(data)
-            .SetEventID(str(uuid.uuid1()))
+            .SetEventID(str(uuid.uuid4()))
             .SetSource("from_your_own_target")
             .SetSubject("your_event_subject")
             .SetEventTime(datetime.now(timezone.utc).astimezone().isoformat())
