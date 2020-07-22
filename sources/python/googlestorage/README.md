@@ -31,6 +31,5 @@ docker build -t gcr.io/triggermesh/googlecloudstorage .
 The source as a deployment and a sink binding
 
 ```
-kubectl apply -f d.yaml
-kubectl apply -f sinkb.yaml
+kubectl apply -f source.yaml
 ```

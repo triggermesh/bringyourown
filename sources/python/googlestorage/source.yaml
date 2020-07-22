@@ -1,3 +1,19 @@
+apiVersion: sources.knative.dev/v1alpha1
+kind: SinkBinding
+metadata:
+  name: bind-google-storage
+spec:
+  subject:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: googlecloudstorage
+
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1alpha1
+      kind: Broker
+      name: default
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
