@@ -69,7 +69,7 @@ def target():
     elif ce.EventType() == "io.triggermesh.byown.delete":
         logging.info("Delete event type")
     else:
-        logging.warning("Unknown EventType")
+        logging.warning("Unknown event type %s" % ce.EventType())
 
     # Create a CloudEvent to send as response
     data = 'this is some data'
