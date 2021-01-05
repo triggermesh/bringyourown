@@ -31,7 +31,7 @@ const EventSubject = "EVENT_SUBJECT"
 const EventID = "EVENT_ID"
 const Payload = "PAYLOAD"
 const Timeout = "TIMEOUT"
-const Sink = "K_SINK"
+const Sink = "SINK"
 
 // adapter implements the source's adapter.
 type adapter struct {
