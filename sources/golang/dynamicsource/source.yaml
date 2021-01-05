@@ -3,34 +3,6 @@
 # metadata:
 #   name: dynamicsource
 # spec:
-#   selector:
-#     matchLabels:
-#       app: dynamicsource
-#   template:
-#     metadata:
-#       labels:
-#         app: dynamicsource
-#     spec:
-#       containers:
-#       - name: dynamicsource
-#         image: ko://github.com/triggermesh/bringyourown/sources/golang/dynamicsource
-#         # gcr.io/neffdev/byo
-#         env:
-#         - name: EVENT_TYPE
-#           value: sample.type
-#         - name: EVENT_SOURCE
-#           value: sample.source
-#         - name: EVENT_SUBJECT
-#           value: sample.subject
-#         - name: EVENT_ID
-#           value: sample.id
-#         - name: PAYLOAD
-#           value: not working
-#         - name: TIMEOUT
-#           value: '1000ms'
-#         - name:  K_SINK
-#           value: http://broker-ingress.knative-eventing.svc.cluster.local/midimansland/default
-
 apiVersion: sources.knative.dev/v1
 kind: ContainerSource
 metadata:
@@ -51,7 +23,8 @@ spec:
           - name: EVENT_ID
             value: sample.id
           - name: PAYLOAD
-            value: null
+            value: -|
+              {"hello":"world"}
           - name: TIMEOUT
             value: '1000ms'
           - name:  SINK

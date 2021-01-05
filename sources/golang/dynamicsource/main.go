@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"time"
@@ -62,6 +63,10 @@ func main() {
 		Sink:         os.Getenv(Sink),
 		ceClient:     c,
 	}
+	dur, err := time.ParseDuration(a.Timeout)
+	if err != nil {
+
+	}
 
 	fmt.Println("Begining to emit specified Cloudevent..")
 	for ok := true; ok; ok = (err == nil) {
@@ -69,10 +74,7 @@ func main() {
 		if err != nil {
 			fmt.Println("got error: %w", err)
 		}
-		dur, err := time.ParseDuration(a.Timeout)
-		if err != nil {
 
-		}
 		time.Sleep(dur)
 	}
 
@@ -91,7 +93,17 @@ func (a *adapter) sendCloudEvent() error {
 	event.SetType(a.EventType)
 	event.SetSource(a.EventSource)
 	event.SetID(a.EventID)
-	event.SetData(cloudevents.ApplicationJSON, map[string]string{"hello": "world"})
+
+	if a.Payload == "" {
+		event.SetData(cloudevents.ApplicationJSON, map[string]string{"hello": "world"})
+	}
+	if a.Payload != "" {
+		json, err := json.Marshal(a.Payload)
+		if err != nil {
+			fmt.Println("Got an error marshaling payload data.")
+		}
+		event.SetData(cloudevents.ApplicationJSON, json)
+	}
 
 	//cant get the normal way working right now :/
 	ctx := cloudevents.ContextWithTarget(context.Background(), a.Sink)
